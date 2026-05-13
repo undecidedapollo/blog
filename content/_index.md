@@ -1,5 +1,5 @@
 +++
-title = "Jonah's Musings"
+title = "Jonah Nestrick"
 description = "Personal blog and place to put my public thoughts"
 +++
 

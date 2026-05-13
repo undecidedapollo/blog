@@ -1,0 +1,12 @@
+{
+  "name": "jonahnestrick-com",
+  "private": true,
+  "scripts": {
+    "build": "git submodule update --init --recursive && zola build",
+    "deploy": "npm run build && wrangler deploy",
+    "dev": "zola serve"
+  },
+  "devDependencies": {
+    "wrangler": "4.90.1"
+  }
+}
