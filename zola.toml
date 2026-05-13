@@ -8,17 +8,27 @@ description = "My personal blog"
 # The default language; used in feeds.
 default_language = "en"
 
-# Whether to automatically compile all Sass files in the sass directory
-compile_sass = true
+compile_sass = false
 
-author = "Jonah Nestrick <undecidedapollo>"
+author = "Jonah Nestrick <jonah.nestrick@gmail.com>"
 
-generate_feeds = true
+
 generate_sitemap = true
 generate_robots_txt = true
 
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = false
+
+theme = "zolanight"
+
+generate_feeds = true
+feed_limit = 10
+feed_filenames = ["atom.xml"]
+
+taxonomies = [{ name = "tags" }]
+
+[extra.zolanight]
+theme = "tokyonight" # Choose from "tokyonight", "tokyostorm", "tokyomoon", "tokyoday"
 
 [markdown]
 

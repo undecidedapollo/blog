@@ -1,5 +1,7 @@
 # jonahnestrick.com
 
+My personal blog. Code / examples are free to use, written content requires attribution.
+
 ## License
 
 - Code: [MIT](./LICENSE-CODE)

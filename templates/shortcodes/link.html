@@ -1,0 +1,7 @@
+{%- if path -%}
+{%- set href = get_url(path=path) -%}
+{%- else -%}
+{%- set href = url -%}
+{%- endif -%}
+{%- set display = href | trim_start_matches(pat="https://") | trim_start_matches(pat="http://") | trim_start_matches(pat="www.") -%}
+<p>[<a href="{{ href | safe }}">{{ label }}</a>](<a href="{{ href | safe }}">{{ display }}</a>)</p>
