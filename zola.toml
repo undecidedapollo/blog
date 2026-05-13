@@ -1,0 +1,30 @@
+# The URL the site will be built for
+base_url = "https://jonahnestrick.com"
+
+# The site title and description; used in feeds by default.
+title = "Jonah Nestrick"
+description = "My personal blog"
+
+# The default language; used in feeds.
+default_language = "en"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+author = "Jonah Nestrick <undecidedapollo>"
+
+generate_feeds = true
+generate_sitemap = true
+generate_robots_txt = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = false
+
+[markdown]
+
+[markdown.highlighting]
+error_on_missing_language = true
+theme = "catppuccin-mocha"
+
+[extra]
+# Put all your custom variables here
