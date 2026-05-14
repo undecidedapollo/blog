@@ -1,5 +1,6 @@
 +++
 title = "Hello, World"
+date = "2026-05-13T15:00:00Z"
 description = "Why am I writing this at all"
 [taxonomies]
 tags = ["rust", "code"]
