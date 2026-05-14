@@ -3,11 +3,11 @@ title = "Jonah Nestrick"
 description = "Personal blog and place to put my public thoughts"
 +++
 
-Hello, welcome to my blog. 
+Hello, welcome to my blog.
 
 I'm Jonah Nestrick, a Software Engineer who likes solving hard problems and learning new things.
 
-My blog covers both and other things I find interesting.
+On here I'll post about problems I'm working on and things I find interesting.
 
 ## Links:
 

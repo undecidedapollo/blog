@@ -31,6 +31,7 @@ taxonomies = [{ name = "tags" }]
 theme = "tokyonight" # Choose from "tokyonight", "tokyostorm", "tokyomoon", "tokyoday"
 
 [markdown]
+insert_anchor_links = "none"
 
 [markdown.highlighting]
 error_on_missing_language = true

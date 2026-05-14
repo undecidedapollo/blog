@@ -1,0 +1,16 @@
+{%- if type == "warning" -%}
+{%- set icon_name = "triangle-alert" -%}
+{%- elif type == "tip" -%}
+{%- set icon_name = "circle-alert" -%}
+{%- else -%}
+{%- set icon_name = "info" -%}
+{%- endif -%}
+{%- set svg = load_data(path="static/icons/" ~ icon_name ~ ".svg", format="plain") -%}
+<div class="callout callout--{{ type }}">
+<span class="callout__icon" aria-hidden="true">{{ svg | safe }}</span>
+<div class="callout__body">
+
+{{ body | markdown | safe }}
+
+</div>
+</div>
