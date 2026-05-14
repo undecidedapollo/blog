@@ -14,18 +14,18 @@ Last year around this time I wanted to work on a low-level project with Rust. Mo
 
 I started out buying a couple {{ link(label="Arduino ESP32", url="https://store-usa.arduino.cc/products/nano-esp32") }} boards and did the basics, blinking lights, ESPNow Ping and Pong, etc. While fun, you also need to be good with electronics to do any useful "work" with an ESP32 and that isn't my strong suit. 
 
-After spending some time searching, I landed on the Game Boy Advance as a fun platform to try and develop for. It has a 32-bit Arm processor, input buttons on the device, has output like a screen and speakers, MMIO (Memory Mapped Input / Output), and is standardized in the sense that what runs on one Game Boy Advance will run on any other. With all of these it also had restrictions such as limited memory, limited rom space, VRAM limitations, sprite limitations. 
+After spending some time searching, I landed on the Game Boy Advance as a fun platform to try and develop for. It has a 32-bit Arm processor, input buttons on the device, has output like a screen and speakers, MMIO (Memory Mapped Input / Output), and is standardized in the sense that what runs on one Game Boy Advance will run on any other. With all of these features it also had some tight restrictions such as limited memory, limited rom space, VRAM limitations, sprite limitations, etc.
 
 On my mind at the time was the quote by Orson Welles:
 
 > "The enemy of art is the absence of limitations"
 > \- Orson Welles
 
-I started out on this journey figuring out what existed in the space already, two crates with different goals in mind.
+I started out on this journey figuring out what existed in the space already. I found two crates with different goals in mind:
 
 The first I saw was the crate {{ link(label="gba", url="https://docs.rs/gba/latest/gba/") }} which posits itself as a crate that does just enough to make a rust safe API to work with the hardware from the language.
 
-In the docs it pointed me to a separate crate:
+The docs said it best:
 
 > This crate provides an API to interact with the GBA that is safe, but with
 > minimal restrictions on what components can be changed when. If you’d like
@@ -34,17 +34,19 @@ In the docs it pointed me to a separate crate:
 
 That statement sold me as I wanted low-level rust with as little hand holding as possible so I dove in to the `gba` crate.
 
-From there I read the repo, setup a project, and followed some great tutorials from other developers on how to get started with GBA developers.
+From there I read the repo, setup a project, and followed some great tutorials from other talented developers on how to get started with GBA development.
 
-The first tutorial I followed was {{ link(label=`Shane's dev blog - "Building GBA Games in Rust"`, url="https://shanesnover.com/2024/02/07/intro-to-rust-on-gba.html") }} which covered Shane's learning process on getting started with GBA development on Rust and pointed me to some of the other tutorials I mentioned below. Best of all was a link to his {{ link(label=`"Conway's Game of Life" repository`, url="https://github.com/ssnover/game-of-life") }} which became the building block for my gba game (and we will pull some features and code from it also). It is worth reading as it covers GBA development at a high level.
+The first tutorial I followed was {{ link(label=`Shane's dev blog - "Building GBA Games in Rust"`, url="https://shanesnover.com/2024/02/07/intro-to-rust-on-gba.html") }} which covered Shane's learning process on getting started with GBA development on Rust and pointed me to some of the other tutorials I mentioned below. Best of all was a link to his {{ link(label=`"Conway's Game of Life" repository`, url="https://github.com/ssnover/game-of-life") }} containing a functional GBA Rust project which became the building block for my gba games (and we will pull some features and code from it as we go). The blog post is worth reading as it covers GBA development at a high level while also providing a concrete example with the "Game of Life".
 
-The main tutorial that I followed was {{ link(label=`Kyle Halladay - "GBA Tutorial"`, url="https://kylehalladay.com/gba.html") }} set of blog posts which covered how to get started with GBA development in C++. From drawing on the screen to drawing a sprite, drawing background layers, user input, it was a great resource and I highly recommend you read it if you haven't already.
+After this, the main tutorials that I followed was {{ link(label=`Kyle Halladay - "GBA Tutorial"`, url="https://kylehalladay.com/gba.html") }} set of blog posts which covered how to get started with GBA development in C++. From drawing on the screen to drawing a sprite, drawing background layers, user input, it was a great resource and I highly recommend you read it when you get a chance. We will cover similar topics in this tutorial in a similar order and you will find that it is a strong inspiration for the pacing and direction of this tutorial.
 
 Another great resource which dove deep into the hardware and explained how the Game Boy Advance actually worked under the hood was {{ link(label="Tonc", url="https://www.coranac.com/tonc/text/toc.htm") }}. This was a bit harder to read as it was very technical but it contained a trove of information such as info on the underlying hardware, memory layout, quirks, tips, pointers, code examples, etc. When it came time to understanding a new system like sprites or background modes, I enjoyed reading the info on each of the modes, what you can do with them, and code examples on how to best leverage them that Tonc provided. I would recommend bookmarking that site as it has a wealth of information that will come in handy later.
 
-This tutorial will rehash many of the things Kyle covered in his tutorials but will be focused solely on Rust and specifically the [gba](https://docs.rs/gba/latest/gba/) crate. Since we are working on an embedded system, we will only have access to `core` (you can use `alloc` also technically but we won't for this project) and will not have access to the traditional, expansive rust standard library.
+This tutorial will rehash many of the things Kyle covered in his tutorials but will be focused solely on Rust and specifically the [gba](https://docs.rs/gba/latest/gba/) crate. Since we are working on an embedded system, we will only have access to `core` (you can use `alloc` also but we won't for this project) and will not have access to the traditional, expansive rust standard library.
 
 This tutorial will cover the basics to get you up and running and future tutorials may be created that cover more advanced topics.
+
+At the end of this tutorial you will have a rust project that builds a functional GBA rom that you can use as a foundation for your own games.
 
 ## Setting Up Your Dev Environment
 
@@ -71,7 +73,23 @@ Lastly we will need an emulator to run our game. According to the `gba` crate, t
 
 We will be using the {{ link(label="mGBA emulator", url="https://mgba.io/downloads.html") }} as it is the recommended emulator by the crate authors. You can download the emulator from that [link](https://mgba.io/downloads.html).
 
-## Project Creation
+## Project Creation (automatic)
+
+The following parts of the tutorial will cover setting up the rust project with the proper configuration.
+
+If you want to skip manual file creation, you can clone a starter copy of this project using the command below:
+
+```shell
+# TODO: ADD CLONE COMMAND
+```
+
+After cloning, you may need to edit your `.cargo/config.toml` to point to your `mGBA` emulator downloaded above, it is different for each Operating System.
+
+Once cloned you should be able to run `cargo run` and it start `mGBA` and show a blank, white screen.
+
+# TODO: Add a link to the section after project creation
+
+## Project Creation (manual)
 
 With everything installed we can use `cargo` to create a new `binary` project which we will use as the foundation for building our GBA game.
 
