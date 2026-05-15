@@ -17,7 +17,9 @@ If you want to skip ahead, the completed lesson code and all code for this tutor
 
 ## [Background](#background) {#background}
 
-This is the part where I tell you my life story before giving you the recipe to make "Chocolate Chip Cookies". [Click here to skip ahead.](#setup) 
+This is the part where I tell you my life story before giving you the recipe to make "Chocolate Chip Cookies".
+
+[Click here to skip ahead to the project setup](#setup)
 
 Last year around this time I wanted to work on a low-level project with Rust. Most of my day job I spent building APIs in TypeScript but Rust had interested me in its ability to model program execution in a safe, performant way allowing developers to write code that performs at native speeds while still having the conveniences of a modern language.
 
