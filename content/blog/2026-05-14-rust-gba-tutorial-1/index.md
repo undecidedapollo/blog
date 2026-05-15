@@ -142,9 +142,14 @@ If you want to skip manual file creation, you can clone a starter copy of this p
 git clone -b starter https://github.com/undecidedapollo/gba-tutorial.git
 ```
 
-After cloning, you may need to edit your `.cargo/config.toml` to point to your `mGBA` emulator downloaded above, it is different for each Operating System.
+{% callout(type="tip") %}
+After cloning, you will need to edit your `.cargo/config.toml` to point to your `mGBA` emulator downloaded above, it is different for each Operating System.
 
-Once cloned you should be able to run `cargo run` and it will start `mGBA` and show a blank, white screen.
+[More info in "Cargo Config" below](#cargo-config)
+
+{% end %}
+
+Once cloned and `.cargo/config.toml` is updated you should be able to run `cargo run` and it will start `mGBA` and show a blank, white screen.
 
 [Click here to skip ahead to "Doing Something"](#doing-something)
 
@@ -177,8 +182,7 @@ channel = "nightly-2026-05-09"
 components = ["rust-src"]
 ```
 
-
-#### Cargo Config
+#### [Cargo Config](#cargo-config) {#cargo-config}
 
 First, we need to tell cargo more about this project and how to build it. We start by creating a directory called `.cargo` and creating a file inside of it called `config.toml` (full path: `.cargo/config.toml`). You will need to modify some values in the file. I've highlighted them below and the callout below has more information. 
 
