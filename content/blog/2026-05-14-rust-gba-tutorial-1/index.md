@@ -1,12 +1,19 @@
 +++
-title = "Rust x GBA: Setup and Pixels (Draft)"
-date = "2026-05-14T15:00:00Z"
+title = "Rust x GBA: Setup and Pixels"
+date = "2026-05-15T16:47:33Z"
 description = "A guide on how to setup a rust project that builds a basic rom which runs on the GBA"
 [taxonomies]
 tags = ["rust", "code", "gba", "gaming"]
 +++
 
-This post is a work in progress.
+This guide will show you how to setup a Rust project that builds a basic rom which runs on the Game Boy Advance. It assumes you already know the basics of Rust and are familiar with software development. If you aren't familiar with Rust, checkout the {{ link(label="Rust Book", url="https://doc.rust-lang.org/book/") }} as it a great resource for learning the very rewarding programming language.
+
+{% callout(type="info") %}
+If you want to skip ahead, the completed lesson code and all code for this tutorial can be found here:
+
+{{ link(label="Lesson 01", url="https://github.com/undecidedapollo/gba-tutorial/tree/lesson-01") }}
+{% end %}
+
 
 ## [Background](#background) {#background}
 
@@ -25,7 +32,7 @@ On my mind at the time was the quote by Orson Welles:
 
 I started out on this journey figuring out what existed in the space already. I found two crates with different goals in mind:
 
-The first I saw was the crate {{ link(label="gba", url="https://docs.rs/gba/latest/gba/") }} which posits itself as a crate that does just enough to make a rust safe API to work with the hardware from the language.
+The first I saw was the crate {{ link(label="gba", url="https://docs.rs/gba/latest/gba/") }} which posits itself as a crate that does just enough to make a Rust safe API to work with the hardware from the language.
 
 The docs said it best:
 
@@ -34,7 +41,7 @@ The docs said it best:
 > an API where the borrow checker provides stronger control over component
 > access then the {{ link(label="agb", url="https://docs.rs/agb/latest/agb/") }} crate might be what you want.
 
-That statement sold me as I wanted low-level rust with as little hand holding as possible so I dove in to the `gba` crate.
+That statement sold me as I wanted low-level Rust with as little hand holding as possible so I dove in to the `gba` crate.
 
 From there I read the repo, setup a project, and followed some great tutorials from other talented developers on how to get started with GBA development.
 
@@ -44,11 +51,11 @@ After this, the main tutorials that I followed was {{ link(label=`Kyle Halladay 
 
 Another great resource which dove deep into the hardware and explained how the Game Boy Advance actually worked under the hood was {{ link(label="Tonc", url="https://www.coranac.com/tonc/text/toc.htm") }}. This was a bit harder to read as it was very technical but it contained a trove of information such as info on the underlying hardware, memory layout, quirks, tips, pointers, code examples, etc. When it came time to understanding a new system like sprites or background modes, I enjoyed reading the info on each of the modes, what you can do with them, and code examples on how to best leverage them that Tonc provided. I would recommend bookmarking that site as it has a wealth of information that will come in handy later.
 
-This tutorial will rehash many of the things Kyle covered in his tutorials but will be focused solely on Rust and specifically the [gba](https://docs.rs/gba/latest/gba/) crate. Since we are working on an embedded system, we will only have access to `core` (you can use `alloc` also but we won't for this project) and will not have access to the traditional, expansive rust standard library.
+This tutorial will rehash many of the things Kyle covered in his tutorials but will be focused solely on Rust and specifically the [gba](https://docs.rs/gba/latest/gba/) crate. Since we are working on an embedded system, we will only have access to `core` (you can use `alloc` also but we won't for this project) and will not have access to the traditional, expansive Rust standard library.
 
 This tutorial will cover the basics to get you up and running and future tutorials may be created that cover more advanced topics.
 
-At the end of this tutorial you will have a rust project that builds a functional GBA rom that you can use as a foundation for your own games.
+At the end of this tutorial you will have a Rust project that builds a functional GBA rom that you can use as a foundation for your own games.
 
 ## [Setting Up Your Dev Environment](#setup) {#setup}
 
@@ -68,8 +75,54 @@ Next we will follow the instructions from the {{ link(label="gba", url="https://
 
 First we will need to download the {{ link(label="ARM Binutils", url="https://developer.arm.com/Tools%20and%20Software/GNU%20Toolchain") }}.
 
-> You'll need the ARM version of the GNU binutils in your path, specifically the linker (`arm-none-eabi-ld`).
-> Linux folks can use the package manager. Mac and Windows folks can use the [ARM Website](https://developer.arm.com/Tools%20and%20Software/GNU%20Toolchain)
+{% callout(type="info") %}
+You may be able to use a package manager for this.
+
+**Mac** You can install these utilities using [Homebrew](https://formulae.brew.sh/formula/arm-none-eabi-binutils):
+
+[https://formulae.brew.sh/formula/arm-none-eabi-binutils](https://formulae.brew.sh/formula/arm-none-eabi-binutils)
+
+```shell
+brew install arm-none-eabi-binutils
+```
+{% end %}
+
+The website is a bit confusing as it contains many options to download, you will need to narrow down the installer you need by:
+
+1. Operating System (Windows, Linux, Mac)
+2. Architecture Intel (x86) vs. ARM (aarch), 32-bit vs. 64 bit, etc.
+3. Toolchain, we are looking for "bare-metal target (`arm-none-eabi`)"
+
+
+
+{% callout(type="tip") %}
+The files I found most helpful were:
+
+**"Windows (mingw-w64-x86_64) hosted cross toolchains" -> "AArch32 bare-metal target (arm-none-eabi)"**
+
+{{ link(label="arm-gnu-toolchain-15.2.rel1-mingw-w64-x86_64-arm-none-eabi.msi", url="https://developer.arm.com/-/media/Files/downloads/gnu/15.2.rel1/binrel/arm-gnu-toolchain-15.2.rel1-mingw-w64-x86_64-arm-none-eabi.msi") }}
+
+**"macOS (Apple silicon) hosted cross toolchains" -> "AArch32 bare-metal target (arm-none-eabi)"**
+
+{{ link(label="arm-gnu-toolchain-15.2.rel1-darwin-arm64-arm-none-eabi.pkg", url="https://developer.arm.com/-/media/Files/downloads/gnu/15.2.rel1/binrel/arm-gnu-toolchain-15.2.rel1-darwin-arm64-arm-none-eabi.pkg") }}
+
+**"x86_64 Linux hosted cross toolchains" -> "AArch32 bare-metal target (arm-none-eabi)"**
+
+{{ link(label="arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi.tar.xz", url="https://developer.arm.com/-/media/Files/downloads/gnu/15.2.rel1/binrel/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi.tar.xz") }}
+
+**"aarch64 Linux hosted cross toolchains" -> "AArch32 bare-metal target (arm-none-eabi)"**
+
+{{ link(label="arm-gnu-toolchain-15.2.rel1-aarch64-arm-none-eabi.tar.xz", url="https://developer.arm.com/-/media/Files/downloads/gnu/15.2.rel1/binrel/arm-gnu-toolchain-15.2.rel1-aarch64-arm-none-eabi.tar.xz") }}
+
+{% end %}
+
+After installation, you will need to alter your path so that the binary `arm-none-eabi-ld` from the ARM tools is in your path.
+
+On Windows, this should be: `C:\Program Files\Arm\GNU Toolchain mingw-w64-x86_64-arm-none-eabi\bin`
+
+[How to set PATH variable on Windows](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
+
+On Mac and Linux, you will need to update your shell environment file to point to the utilities. If you used a package manager you should be able to skip this step.
 
 ##### GBA Emulator
 
@@ -79,7 +132,7 @@ We will be using the {{ link(label="mGBA emulator", url="https://mgba.io/downloa
 
 ## [Project Creation (automatic)](#project-creation-auto) {#project-creation-auto}
 
-The following section of the tutorial covers setting up the rust project with the proper configuration.
+The following section of the tutorial covers setting up the Rust project with the proper configuration.
 
 If you want to skip manual file creation, you can clone a starter copy of this project using the command below:
 
@@ -105,7 +158,7 @@ We can now `cd gba-tutorial` into our project and begin setting it up for GBA de
 
 #### Nightly Rust
 
-GBA development with rust requires us to use the nightly compiler. To tell rust to always use the nightly compiler for our project we start by setting up a `rust-toolchain.toml` file in the root of our project.
+GBA development with Rust requires us to use the nightly compiler. To tell Rust to always use the nightly compiler for our project we start by setting up a `rust-toolchain.toml` file in the root of our project.
 
 
 ```toml
@@ -125,9 +178,15 @@ components = ["rust-src"]
 
 #### Cargo Config
 
-First, we need to tell cargo more about this project and how to build it. We start by creating a directory called `.cargo` and creating a file inside of it called `config.toml` (full path: `.cargo/config.toml`). Inside of the file we set a few options:
+First, we need to tell cargo more about this project and how to build it. We start by creating a directory called `.cargo` and creating a file inside of it called `config.toml` (full path: `.cargo/config.toml`). You will need to modify some values in the file. I've highlighted them below and the callout below has more information. 
 
-```toml
+{% callout(type="warning") %}
+The runner variable needs to point to the mGBA executable somewhere on your system. Depending on how you installed it (download, package manager, etc.) you will need to update the runner to point at the executable.
+
+I've included a few common configurations below that you can uncomment (remove the `#` symbol before the `runner = "MGBA_LOCATION"` of your choice).
+{% end %}
+
+```toml,hl_lines=10-17
 [build]
 target = "thumbv4t-none-eabi" # Specify the cpu / system architecture we are targeting
 
@@ -135,15 +194,20 @@ target = "thumbv4t-none-eabi" # Specify the cpu / system architecture we are tar
 build-std = ["core"] # Specify we only want core
 
 [target.thumbv4t-none-eabi]
+# UNCOMMENT THE RUNNER FOR YOUR PLATFORM
 
-# NOTE: you may need to update this for your own operating system
-runner = "mgba-qt" # sets the emulator to run bins/examples with
-# Mac:
-# runner = "/Applications/mGBA.app/Contents/MacOS/mGBA"
+# Windows: Point at the installed exe
+# runner = ["C:\\Program Files\\mGBA\\mGBA.exe"]
+
+# MacOS: Point at the executable inside the .app file
+# runner = ["/Applications/mGBA.app/Contents/MacOS/mGBA"]
+
+# Linux: if installed with a package manager
+# runner = ["mgba-qt"]
 
 rustflags = [
-  "-Clinker=arm-none-eabi-ld", # uses the ARM linker
-  "-Clink-arg=-Tlinker.ld", # sets the link script
+    "-Clinker=arm-none-eabi-ld", # uses the ARM linker
+    "-Clink-arg=-Tlinker.ld", # sets the link script
 ]
 ```
 
@@ -234,7 +298,14 @@ At this point we can run our rom!
 cargo run --release
 ```
 
-While it doesn't do anything but display a white screen, it does show that we can build a rust program into a Game Boy Advance ROM.
+{% callout(type="info") %}
+We use `--release` mode because the Rust code generated in debug mode is not optimized and the ARM processor on the GBA too slow to run the code at reasonable rate.
+
+Later when we draw a rectangle, try running in debug mode (without the release flag) and watch how slowly it fills the screen.
+
+{%end%}
+
+While it doesn't do anything but display a white screen, it does show that we can build a Rust program into a Game Boy Advance ROM.
 
 ![mGBA emulator showing a white background](assets/white_bg.png)
 
@@ -412,3 +483,9 @@ With that we have built a Rust program that compiles to a Game Boy Advance ROM w
 In the meantime I highly recommend reading {{ link(label=`Kyle Halladay - "GBA Tutorial"`, url="https://kylehalladay.com/gba.html") }} as he covers these topics in C++. Many of the code examples you can bring over to Rust with some minor translation.
 
 Also take a look at the docs for the {{ link(label="gba", url="https://docs.rs/gba/latest/gba/") }} crate, there is a lot of useful information inside. The {{ link(label="repo", url="https://github.com/rust-console/gba") }} also has an `/examples` folder which shows you how to do various things on the gba (note, you may have to make some updates since we are using the 2024 edition of Rust).
+
+> The full source code for the above tutorial can be found here:
+> 
+> {{ link(label="Lesson 01", url="https://github.com/undecidedapollo/gba-tutorial/tree/lesson-01") }}
+
+I'll update this spot with links as more tutorials and related articles are created. If you see nothing, that means you are up to date 😄

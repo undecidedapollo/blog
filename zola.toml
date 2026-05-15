@@ -30,6 +30,12 @@ taxonomies = [{ name = "tags" }]
 [extra.zolanight]
 theme = "tokyonight" # Choose from "tokyonight", "tokyostorm", "tokyomoon", "tokyoday"
 
+[link_checker]
+skip_prefixes = [
+    "https://developer.arm.com/",
+    "https://www.linkedin.com/",
+]
+
 [markdown]
 insert_anchor_links = "none"
 
