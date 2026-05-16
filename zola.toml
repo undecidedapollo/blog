@@ -41,7 +41,10 @@ insert_anchor_links = "none"
 
 [markdown.highlighting]
 error_on_missing_language = true
-theme = "catppuccin-mocha"
+
+style = "class"
+light_theme = "catppuccin-latte"
+dark_theme = "catppuccin-mocha"
 
 [extra]
 # Put all your custom variables here
